@@ -1,0 +1,27 @@
+version: '3'
+volumes:
+  data:
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: django
+      POSTGRES_PASSWORD: django
+      POSTGRES_DB: django
+    volumes:
+      - data:/var/lib/postgresql/data
+    ports:
+      - "9432:5432"
+  django:
+    build:
+      context: .
+    volumes:
+      - ./:/app
+    ports:
+      - "8000:8000"
+    command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      DOCKER_DB_HOST: postgres
+      DOCKER_DB_PORT: 5432
+    depends_on:
+      - postgres
